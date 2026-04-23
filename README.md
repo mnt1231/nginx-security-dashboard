@@ -1,1 +1,1 @@
-# ec2-nginx-web-server
+# log-dashboard-server

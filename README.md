@@ -164,35 +164,48 @@ sudo apt install python3-matplotlib -y
 ```
 
 ### 2. プロジェクト作成
+```bash
 mkdir log-dashboard
 cd log-dashboard
 ls
+```
 
 ### 3. スクリプト作成・実行
+```bash
 nano analyzer.py
 cat analyzer.py
 python3 analyzer.py
+```
 
-### 4. ログ確認。解析
+### 4. ログ確認・解析
+```bash
 ls /var/log/nginx
 tail -f /var/log/nginx/access.log
 tail -n 20 /var/log/nginx/access.log | grep 404
 tail -f /var/log/syslog
+```
 
 ### 5. 権限設定
+```bash
 sudo chown -R ubuntu:ubuntu /var/www/html
 whoami
+```
 
 ### 6. インデント修正
+```bash
 cp analyzer.py analyzer_backup.py
 expand -t 4 analyzer.py > tmp.py
 mv tmp.py analyzer.py
+```
 
 ### 7. ファイル整理・リネーム
+```bash
 mv analyzer.py security_log_dashboard.py
 rm analyzer_backup.py
-ls
+```
 
 ### 8. crontab確認
+```bash
 crontab -e
 crontab -l
+```

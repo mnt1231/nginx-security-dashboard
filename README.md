@@ -151,3 +151,48 @@ IPごとに以下のルールでスコア化：
 - User-Agent分析によるbot検出
 - GeoIPによるアクセス地域分析
 - Slack / Email通知機能の追加
+
+
+## 実行コマンド履歴（抜粋）
+
+### 1. 環境構築（Nginx / Python）
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install nginx -y
+sudo apt install python3 -y
+sudo apt install python3-matplotlib -y
+```
+
+### 2. プロジェクト作成
+mkdir log-dashboard
+cd log-dashboard
+ls
+
+### 3. スクリプト作成・実行
+nano analyzer.py
+cat analyzer.py
+python3 analyzer.py
+
+### 4. ログ確認。解析
+ls /var/log/nginx
+tail -f /var/log/nginx/access.log
+tail -n 20 /var/log/nginx/access.log | grep 404
+tail -f /var/log/syslog
+
+### 5. 権限設定
+sudo chown -R ubuntu:ubuntu /var/www/html
+whoami
+
+### 6. インデント修正
+cp analyzer.py analyzer_backup.py
+expand -t 4 analyzer.py > tmp.py
+mv tmp.py analyzer.py
+
+### 7. ファイル整理・リネーム
+mv analyzer.py security_log_dashboard.py
+rm analyzer_backup.py
+ls
+
+### 8. crontab確認
+crontab -e
+crontab -l

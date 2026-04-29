@@ -24,10 +24,10 @@
 
 ## 環境
 
-- クラウド: AWS EC2 (Ubuntu Server 22.04)  
+- クラウド: AWS EC2 (Ubuntu Server 24.04)  
   - 仮想サーバーを構築し、Nginxを用いてWebサーバーを公開  
   - セキュリティグループによりHTTP/SSH通信を許可
-- OS: Ubuntu Server 22.04  
+- OS: Ubuntu Server 24.04  
 - Webサーバー: Nginx  
 - 開発言語: Python 3.x  
 - 使用ライブラリ: matplotlib, collections（defaultdict）  

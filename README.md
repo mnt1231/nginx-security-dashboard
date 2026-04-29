@@ -1,1 +1,1 @@
-# log-dashboard-server
+# Nginx Log Security Monitoring Dashboard

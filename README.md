@@ -34,6 +34,28 @@
 
 ---
 
+## システム構成
+
+```text
+[Client (Browser / curl)]
+          │
+          ▼
+   HTTPリクエスト
+          │
+          ▼
+[EC2 (Ubuntu)]
+   ├── Nginx（Webサーバー）
+   │     ├── /var/log/nginx/access.log（ログ出力）
+   │     └── /var/www/html/index.html（ダッシュボード）
+   │
+   ├── Python（ログ解析）
+   │     └── security_log_analyzer.py
+   │
+   └── cron（定期実行）
+          │
+          ▼
+   access.log → 解析 → HTML更新 → ブラウザで可視化
+
 ## 実装内容
 
 ### 1. アクセスログ解析

@@ -105,7 +105,7 @@ IPごとに以下のルールでスコア化：
   nano analyzer.py
   python3 analyzer.py
 
-  ※実装当時は解析をメインに行っていたため analyzer.py という名称でしたが、現在は機能拡張により security_log_dashboard.py にリネームし、役割を「ログ解析ツール」から「セキュリティ監視ダッシュボード」へ明確化しています。
+  ※実装当時は解析をメインに行っていたため analyzer.py という名称でしたが、現在は機能拡張により security-log-analyzer.py にリネームし、役割を「ログ解析ツール」から「セキュリティ監視ダッシュボード」へ明確化しています。
 
 ---
 
@@ -200,8 +200,7 @@ mv tmp.py analyzer.py
 
 ### 7. ファイル整理・リネーム
 ```bash
-mv analyzer.py security_log_dashboard.py
-rm analyzer_backup.py
+mv analyzer.py security-log-analyzer.py
 ```
 
 ### 8. crontab確認

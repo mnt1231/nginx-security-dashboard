@@ -1,5 +1,6 @@
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import re
 
 # =========================
 # 設定
@@ -21,6 +22,11 @@ attack_patterns = defaultdict(int)
 # =========================
 # ログ解析
 # =========================
+log_pattern = re.compile(
+    r'(\S+) .*?"\S+ (.*?) HTTP/.*?" (\d{3})'
+)
+
+
 with open(LOG_FILE) as f:
     for line in f:
         parts = line.split()
@@ -57,7 +63,7 @@ with open(LOG_FILE) as f:
         # =========================
         status_count[status] += 1
 
-        # =========================
+        # ========================
         # 攻撃パターン分類
         # =========================
         if "phpunit" in url:
@@ -66,17 +72,22 @@ with open(LOG_FILE) as f:
         elif "laravel" in url:
             attack_patterns["laravel"] += 1
 
-        elif "wp-" in url or "wordpress" in url:
+        elif any(x in url for x in ["wp-", "wordpress", "wp-login", "wp-admin"]):
             attack_patterns["wordpress"] += 1
 
-        elif "admin" in url or "login" in url:
+        elif any(x in url for x in ["admin", "login"]):
             attack_patterns["scan"] += 1
 
-        elif "cgi-bin" in url or "xmlrpc" in url or "env" in url:
+        elif any(x in url for x in ["cgi-bin", "xmlrpc", ".env", ".git", "config", "backup"]):
             attack_patterns["scan"] += 1
+    
+        elif any(x in url for x in [".png", ".jpg", ".css", ".js", "favicon"]):
+            continue
 
         else:
             attack_patterns["unknown"] += 1
+
+ 
 
 
 # =========================
@@ -85,6 +96,17 @@ with open(LOG_FILE) as f:
 total = sum(status_count.values())
 error = status_count.get("404", 0) + status_count.get("500", 0)
 error_rate = (error / total * 100) if total > 0 else 0
+
+
+# =========================
+# スコア正規化（0〜100）
+# =========================
+max_score = max(ip_score.values()) if ip_score else 1
+
+normalized_scores = {
+    ip: int(score / max_score * 100)
+    for ip, score in ip_score.items()
+}
 
 
 # =========================
@@ -138,9 +160,9 @@ for ip, count in top_ips:
 html += "<h2>Top Attack IPs (Risk Score)</h2>"
 
 for ip, score in attack_ips:
-    if score >= 50:
+    if score >= 80:
         html += f'<p style="color:red; font-weight:bold;">{ip} : {score} (CRITICAL)</p>'
-    elif score >= 20:
+    elif score >= 50:
         html += f'<p style="color:orange;">{ip} : {score} (HIGH)</p>'
     else:
         html += f"<p>{ip} : {score}</p>"

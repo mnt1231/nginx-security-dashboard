@@ -31,13 +31,13 @@ with open(LOG_FILE) as f:
     for line in f:
         parts = line.split()
 
-        # フォーマット崩れ対策
-        if len(parts) < 9:
+        match = log_pattern.match(line)
+        if not match:
             continue
 
-        ip = parts[0]
-        url = parts[6]
-        status = parts[8]
+        ip = match.group(1)
+        url = match.group(2)
+        status = match.group(3)
 
         # =========================
         # 基本アクセス

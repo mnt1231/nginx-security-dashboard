@@ -233,9 +233,9 @@ ls
 
 ### 3. スクリプト作成・実行
 ```bash
-nano analyzer.py
-cat analyzer.py
-python3 analyzer.py
+nano security_log_analyzer.py
+cat security_log_analyzer.py
+python3 security_log_analyzer.py
 ```
 
 ### 4. ログ確認・解析
@@ -249,14 +249,15 @@ tail -f /var/log/syslog
 ### 5. 権限設定
 ```bash
 sudo chown -R ubuntu:ubuntu /var/www/html
+sudo crontab -e
 whoami
 ```
 
 ### 6. インデント修正
 ```bash
-cp analyzer.py analyzer_backup.py
-expand -t 4 analyzer.py > tmp.py
-mv tmp.py analyzer.py
+cp security_log_analyzer.py security_log_analyzer_backup.py
+expand -t 4 security_log_analyzer.py > tmp.py
+mv tmp.py security_log_analyzer.py
 ```
 
 ### 7. ファイル整理・リネーム
@@ -266,6 +267,6 @@ mv analyzer.py security_log_analyzer.py
 
 ### 8. crontab確認
 ```bash
-crontab -e
-crontab -l
+sudo crontab -e
+sudo crontab -l
 ```

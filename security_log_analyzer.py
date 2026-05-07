@@ -23,21 +23,28 @@ attack_patterns = defaultdict(int)
 # ログ解析
 # =========================
 log_pattern = re.compile(
-    r'(\S+) .*?"\S+ (.*?) HTTP/.*?" (\d{3})'
+    r'^(\S+) - - \[.*?\] "\S+ (.*?) HTTP/[\d.]+" (\d{3})'
 )
 
 
 with open(LOG_FILE) as f:
     for line in f:
-        parts = line.split()
-
         match = log_pattern.match(line)
+
         if not match:
             continue
 
         ip = match.group(1)
         url = match.group(2)
         status = match.group(3)
+
+        # =========================
+        # 静的ファイル除外(unknown増加防止)
+        # =========================
+        if any(x in url for x in [
+            ".png", ".jpg", ".css", ".js", "favicon"
+        ]):
+            continue
 
         # =========================
         # 基本アクセス
@@ -72,22 +79,31 @@ with open(LOG_FILE) as f:
         elif "laravel" in url:
             attack_patterns["laravel"] += 1
 
-        elif any(x in url for x in ["wp-", "wordpress", "wp-login", "wp-admin"]):
+        elif any(x in url for x in [
+            "wp-",
+            "wordpress",
+            "wp-login",
+            "wp-admin"
+        ]):
             attack_patterns["wordpress"] += 1
 
-        elif any(x in url for x in ["admin", "login"]):
+        elif any(x in url for x in [
+            "admin",
+            "login",
+            "cgi-bin",
+            "xmlrpc",
+            ".env",
+            ".git",
+            "config",
+            "backup"
+        ]):
             attack_patterns["scan"] += 1
 
-        elif any(x in url for x in ["cgi-bin", "xmlrpc", ".env", ".git", "config", "backup"]):
-            attack_patterns["scan"] += 1
-    
-        elif any(x in url for x in [".png", ".jpg", ".css", ".js", "favicon"]):
-            continue
+        elif url == "/":
+            attack_patterns["normal"] += 1
 
         else:
             attack_patterns["unknown"] += 1
-
- 
 
 
 # =========================
@@ -157,15 +173,20 @@ for ip, count in top_ips:
 # =========================
 # 攻撃IPランキング（スコア）
 # =========================
-html += "<h2>Top Attack IPs (Risk Score)</h2>"
+html += "<h2>Top Attack IPs (Normalized Risk Score)</h2>"
 
 for ip, score in attack_ips:
-    if score >= 80:
-        html += f'<p style="color:red; font-weight:bold;">{ip} : {score} (CRITICAL)</p>'
-    elif score >= 50:
-        html += f'<p style="color:orange;">{ip} : {score} (HIGH)</p>'
+
+    norm_s = normalized_scores[ip]
+
+    if norm_s >= 80:
+        html += f'<p style="color:red; font-weight:bold;">{ip} : {norm_s} (CRITICAL)</p>'
+
+    elif norm_s >= 50:
+        html += f'<p style="color:orange;">{ip} : {norm_s} (HIGH)</p>'
+
     else:
-        html += f"<p>{ip} : {score}</p>"
+        html += f"<p>{ip} : {norm_s}</p>"
 
 
 # =========================
